@@ -28,9 +28,6 @@ git = Git.open('.')
 current_branch = git.current_branch
 origin = git.remotes.find { |remote| remote.name == 'origin' }
 
-match_data = origin.url.match(/git@github.com:(.*)\/(.*)\.git/)
-organization, repo_name = match_data.captures
-
 organization, repo_name = origin.url.match(/git@github.com:(.*)\/(.*)\.git/).captures
 repo_full_name = "#{organization}/#{repo_name}"
 
