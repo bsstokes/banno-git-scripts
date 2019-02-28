@@ -14,11 +14,14 @@
 # 1. Be sure your `GITHUB_OAUTH_REPO_TOKEN` environment variable is set up.
 # 2. Install the required gems:
 #
-#   gem install git
-#   gem install httparty
-#
-require 'git'
-require 'httparty'
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'octokit', '~> 4.3'
+  gem 'git', '~> 1.5'
+  gem 'httparty', '~> 0.13.7'
+end
 
 class GitHubApi
   def self.issue_url(api_path, token = ENV['GITHUB_OAUTH_REPO_TOKEN'])
