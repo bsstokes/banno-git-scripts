@@ -20,6 +20,10 @@ gemfile do
   gem 'git', '~> 1.5'
 end
 
+trap "SIGINT" do
+  exit
+end
+
 def jenkins_url(repo_full_name, pull_request_number)
   androidJobPath = 'https://jenkins.dev.banno-internal.com/job/mobile-android/job'
   jenkins_map = {

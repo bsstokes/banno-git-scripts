@@ -20,6 +20,10 @@ gemfile do
   gem 'git', '~> 1.5'
 end
 
+trap "SIGINT" do
+  exit
+end
+
 git = Git.open('.')
 current_branch = git.current_branch
 origin = git.remotes.find { |remote| remote.name == 'origin' }

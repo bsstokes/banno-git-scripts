@@ -24,6 +24,10 @@ gemfile do
   gem 'git', '~> 1.5'
 end
 
+trap "SIGINT" do
+  exit
+end
+
 show_all = (ARGV[0] == 'all')
 
 access_token = ENV['GITHUB_OAUTH_REPO_TOKEN'] || abort("GITHUB_OAUTH_REPO_TOKEN isn't defined")
