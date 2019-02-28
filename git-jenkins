@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+#
+# Open the Jenkins job associated with the GitHub pull request for the current branch.
+#
+# `git jenkins`
+#
+# Usage:
+#
+# 1. Set your `GITHUB_OAUTH_REPO_TOKEN` environment variable.
+# 2. Install Bundler, e.g. `gem install bundler`.
+# 3. Put this script on your path, and make it executable.
+# 4. Call `git jenkins`.
+# 5. Be amazed.
+#
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'octokit', '~> 4.3'
+  gem 'git', '~> 1.5'
+end
+
+def jenkins_url(repo_full_name, pull_request_number)
+  androidJobPath = 'https://jenkins.dev.banno-internal.com/job/mobile-android/job'
+  jenkins_map = {
+    'Banno/mobile-android' => "#{androidJobPath}/android-tests/view/change-requests/job/PR-#{pull_request_number}",
+    'Banno/conversations-android' => "#{androidJobPath}/conversations/job/tests/view/change-requests/job/PR-#{pull_request_number}",
+    'Banno/zelle-android' => "#{androidJobPath}/zelle/job/tests/view/change-requests/job/PR-#{pull_request_number}"
+  }
+
+  jenkins_map[repo_full_name]
+end
+
+git = Git.open('.')
+current_branch = git.current_branch
+origin = git.remotes.find { |remote| remote.name == 'origin' }
+
+organization, repo_name = origin.url.match(/git@github.com:(.*)\/(.*)\.git/).captures
+repo_full_name = "#{organization}/#{repo_name}"
+
+access_token = ENV['GITHUB_OAUTH_REPO_TOKEN'] || abort("GITHUB_OAUTH_REPO_TOKEN isn't defined")
+client = Octokit::Client.new(:access_token => access_token)
+pull_requests = client.pull_requests(repo_full_name, head: "#{organization}:#{current_branch}")
+
+pull_request = pull_requests.first || abort("Couldn't find pull request for branch #{current_branch}")
+jenkins_url = jenkins_url(repo_full_name, pull_request.number) || abort("No mapping for #{repo_full_name}")
+
+puts jenkins_url
+`open #{jenkins_url}`
