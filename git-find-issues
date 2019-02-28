@@ -22,7 +22,6 @@ gemfile do
   source 'https://rubygems.org'
   gem 'octokit', '~> 4.3'
   gem 'git', '~> 1.5'
-  gem 'httparty', '~> 0.13.7'
 end
 
 show_all = (ARGV[0] == 'all')
