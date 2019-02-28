@@ -25,72 +25,31 @@ gemfile do
   gem 'httparty', '~> 0.13.7'
 end
 
-class GitHubApi
-  def self.issue_url(api_path, token = ENV['GITHUB_OAUTH_REPO_TOKEN'])
-    "https://api.github.com/repos/#{api_path}?access_token=#{token}"
-  end
-
-  def self.get_issue(api_path)
-    url = GitHubApi.issue_url(api_path)
-    GitHubApi::Issue.new(HTTParty.get(url).parsed_response)
-  end
-
-  Issue = Struct.new(:response) do
-    def open?
-      state == 'open'
-    end
-
-    def state
-      response['state']
-    end
-
-    def html_url
-      response['html_url']
-    end
-
-    def author
-      response['user']['login']
-    end
-  end
-end
-
-Issue = Struct.new(:file_path, :line_number, :issue_number, :api_path) do
-  def to_s
-    "file://#{file_path}:#{line_number}" # (##{issue_number})"
-  end
-end
-
-class FindStaleIssues
-
-  def run(show_all = false)
-    git = Git.open('.')
-    #file_matches = git.grep('github.*issues.*[[:digit:]]', nil, {ignore_case: true})
-    file_matches = git.grep('TODO.*github.*issues.*[[:digit:]]', nil, {ignore_case: true})
-
-    issues = file_matches.flat_map do |object, file_match|
-      file_path = object.split(':')[-1]
-
-      file_match.map do |line_match|
-        line_number = line_match[0]
-        match = line_match[1]
-
-        match_data = /https:\/\/github.com\/(.*\/issues\/([[:digit:]]+))/.match(match)
-
-        api_path = match_data[1]
-        issue_number = match_data[2]
-
-        Issue.new(file_path, line_number, issue_number, api_path)
-      end
-    end
-
-    issues.each do |issue|
-      gitHubIssue = GitHubApi.get_issue(issue.api_path)
-      if show_all or !gitHubIssue.open?
-        puts "#{issue}\n#{gitHubIssue.html_url} [#{gitHubIssue.state}] by @#{gitHubIssue.author}\n\n"
-      end
-    end
-  end
-end
-
 show_all = (ARGV[0] == 'all')
-FindStaleIssues.new.run(show_all)
+
+access_token = ENV['GITHUB_OAUTH_REPO_TOKEN'] || abort("GITHUB_OAUTH_REPO_TOKEN isn't defined")
+client = Octokit::Client.new(:access_token => access_token)
+
+git = Git.open('.')
+file_matches = git.grep('TODO.*github.*issues.*[[:digit:]]', nil, {ignore_case: true})
+
+issues = file_matches.flat_map do |object, file_match|
+  file_path = object.split(':')[-1]
+
+  file_match.map do |line_match|
+    line_number, match = line_match
+
+    owner, repo_name, issue_number = /https:\/\/github.com\/(.*)\/(.*)\/issues\/([[:digit:]]+)/
+      .match(match)
+      .captures
+
+    issue = client.issue("#{owner}/#{repo_name}", issue_number)
+
+    if show_all or issue.state != 'open'
+      puts "file://#{file_path}:#{line_number}"
+      puts "##{issue.number} #{issue.title} by @#{issue.user.login}"
+      puts "#{issue.html_url} [#{issue.state}]"
+      puts "\n"
+    end
+  end
+end
