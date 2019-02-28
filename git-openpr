@@ -28,12 +28,12 @@ git = Git.open('.')
 current_branch = git.current_branch
 origin = git.remotes.find { |remote| remote.name == 'origin' }
 
-organization, repo_name = origin.url.match(/git@github.com:(.*)\/(.*)\.git/).captures
-repo_full_name = "#{organization}/#{repo_name}"
+owner, repo_name = origin.url.match(/git@github.com:(.*)\/(.*)\.git/).captures
+repo_full_name = "#{owner}/#{repo_name}"
 
 access_token = ENV['GITHUB_OAUTH_REPO_TOKEN'] || abort("GITHUB_OAUTH_REPO_TOKEN isn't defined")
 client = Octokit::Client.new(:access_token => access_token)
-pull_requests = client.pull_requests(repo_full_name, head: "#{organization}:#{current_branch}")
+pull_requests = client.pull_requests(repo_full_name, head: "#{owner}:#{current_branch}")
 
 pull_request_html_url = pull_requests.first&.html_url || "https://github.com/#{repo_full_name}/compare/master...#{current_branch}"
 
