@@ -14,3 +14,9 @@ Here's a collection of Git scripts that help with development at Banno.
 2. Install [Bundler](https://bundler.io/), e.g. `gem install bundler`.
 3. Put the script on your path, and make it executable.
 4. Call the appropriate `git` command, e.g. `git jenkins`, `git openpr`, etc.
+
+## Git Hooks
+
+1. Copy these into your project's `.git/hooks` directory.
+2. Make them executuable.
+
