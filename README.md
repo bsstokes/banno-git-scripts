@@ -1,12 +1,14 @@
 # Banno Git Scripts
 
+## Git Scripts
+
 Here's a collection of Git scripts that help with development at Banno.
 
-* [`git-find-issues`](git-find-issues) finds TODOs with accompanying GitHub issues.
-* [`git-jenkins`](git-jenkins) opens the Jenkins job associated with the GitHub pull request for the current branch.
-* [`git-openpr`](git-openpr) opens the GitHub pull request for the current branch.
+* [`git-find-issues`](git-scripts/git-find-issues) finds TODOs with accompanying GitHub issues.
+* [`git-jenkins`](git-scripts/git-jenkins) opens the Jenkins job associated with the GitHub pull request for the current branch.
+* [`git-openpr`](git-scripts/git-openpr) opens the GitHub pull request for the current branch.
 
-## Usage
+### Usage
 
 1. Set your `GITHUB_OAUTH_REPO_TOKEN` environment variable.
 2. Install [Bundler](https://bundler.io/), e.g. `gem install bundler`.
