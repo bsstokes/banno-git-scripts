@@ -6,7 +6,7 @@ Here's a collection of Git scripts that help with development at Banno.
 
 * [`git-find-issues`](git-scripts/git-find-issues) finds TODOs with accompanying GitHub issues.
 * [`git-jenkins`](git-scripts/git-jenkins) opens the Jenkins job associated with the GitHub pull request for the current branch.
-* [`git-openpr`](git-scripts/git-openpr) opens the GitHub pull request for the current branch.
+* [`git-open-pr`](git-scripts/git-open-pr) opens the GitHub pull request for the current branch.
 
 ### Usage
 

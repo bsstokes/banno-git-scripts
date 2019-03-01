@@ -2,14 +2,14 @@
 
 # Open the GitHub pull request for the current branch.
 #
-# `git openpr`
+# `git open-pr`
 #
 # Usage:
 #
 # 1. Set your `GITHUB_OAUTH_REPO_TOKEN` environment variable.
 # 2. Install Bundler, e.g. `gem install bundler`.
 # 3. Put this script on your path, and make it executable.
-# 4. Call `git openpr`.
+# 4. Call `git open-pr`.
 # 5. Be amazed.
 #
 require 'bundler/inline'
